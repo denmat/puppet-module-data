@@ -68,6 +68,7 @@ class Hiera
           next unless data.include?(key)
 
           found = data[key]
+          Hiera.debug("Found #{key} in #{source}")
 
           case resolution_type
             when :array
