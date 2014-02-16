@@ -5,13 +5,13 @@ require "hiera/scope"
 begin
   require 'puppet/indirector/hiera'
 rescue LoadError => e
-  $stderr.puts "Couldn't require puppet/indirector/hiera, whatever"
+  Puppet::Error.new("Couldn't require puppet/indirector/hiera..")
 end
 
 begin
   require "puppet/indirector/code"
 rescue LoadError => e
-  $stderr.puts "Couldn't require puppet/indirector/code, whatever"
+  Puppet::Error.new("Couldn't require puppet/indirector/code..")
 end
 
 
