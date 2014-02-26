@@ -59,3 +59,15 @@ Contact?
 --------
 
 R.I.Pienaar / rip@devco.net / @ripienaar / http://devco.net
+
+
+Installation:
+-------------
+
+DenMat speaking: I've included a little Rakefile to install these modules. It will need modification for your own environment
+but you can use that as a template.
+
+```
+rake install_into_gemset[gemset,puppet_version,hiera_version,hiera_puppet_helper_version]  # install into the local gemsets
+rake install_into_rh                                                                       # deploy to RH family
+```
