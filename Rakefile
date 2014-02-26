@@ -4,18 +4,18 @@ require 'rake'
 
   # kinda should work 
   def rh_puppet_path
-    rh_puppet_path = %x[find /usr/lib/ruby -type d -name 'puppet' |grep -v puppetx | head -n 1]
+    rh_puppet_path = %x[find /usr/lib/ruby -type d -name 'puppet' |grep -v puppetx | head -n 1].chomp
   end
 
   def rh_hiera_path
-    hiera_path = %x[find /usr/lib/ruby -type d -name 'hiera' | head -n 1]
+    hiera_path = %x[find /usr/lib/ruby -type d -name 'hiera' | head -n 1].chomp
   end
 
   def hiera_helper_gem
     if %x[gem list |grep hiera-puppet-helper] 
-      hiera_helper = %x[find /usr/lib/ruby -type d -name 'hiera-puppet-helper*' |head -n 1]
+      hiera_helper = %x[find /usr/lib/ruby -type d -name 'hiera-puppet-helper*' |head -n 1].chomp
     else
-      nil
+      return nil
     end
   end
 
@@ -34,14 +34,19 @@ require 'rake'
 
   desc 'deploy to RH family'
   task :install_into_rh  do 
-    sh %{cp #{@puppet_file} #{rh_puppet_path}/indirector/data_binding/} do |ok, res|
-      raise "failed to install into #{rh_puppet_path}/indirector/data_binding/" unless ok
+
+    @rh_puppet_path = rh_puppet_path
+    @hiera_path = rh_hiera_path
+    @hiera_helper_gem = hiera_helper_gem
+
+    sh %{cp #{@puppet_file} #{@rh_puppet_path}/indirector/data_binding/} do |ok, res|
+      raise "failed to install into #{@rh_puppet_path}/indirector/data_binding/" unless ok
     end
-    sh %{cp #{@hiera_file} #{hiera_path}/backend/} do |ok, res|
-      raise "failed to install into #{hiera_path}/backend" unless ok
+    sh %{cp #{@hiera_file} #{@hiera_path}/backend/} do |ok, res|
+      raise "failed to install into #{@hiera_path}/backend" unless ok
     end
-    if hiera_helper_gem 
-      sh %{cp #{@hiera_file} #{hiera_helper_gem}/lib/hiera/backend/} do |ok, res|
+    if @hiera_helper_gem != ''
+      sh %{cp #{@hiera_file} #{@hiera_helper_gem}/lib/hiera/backend/} do |ok, res|
         raise "failed to install module_data_backend.rb into hiera-puppet-helper gem" unless ok
       end
     end
