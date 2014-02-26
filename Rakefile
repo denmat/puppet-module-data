@@ -4,7 +4,7 @@ require 'rake'
 
   # kinda should work 
   def rh_puppet_path
-    rh_puppet_path = %x[find /usr/lib/ruby -type d -name 'puppet' | head -n 1]
+    rh_puppet_path = %x[find /usr/lib/ruby -type d -name 'puppet' |grep -v puppetx | head -n 1]
   end
 
   def rh_hiera_path
