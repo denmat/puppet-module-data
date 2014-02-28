@@ -13,22 +13,45 @@ require 'rake'
 
   def hiera_helper_gem
     if %x[gem list |grep hiera-puppet-helper] 
-      hiera_helper = %x[find /usr/lib/ruby -type d -name 'hiera-puppet-helper*' |head -n 1].chomp
+      %x[find /usr/lib/ruby -type d -name 'hiera-puppet-helper*' |head -n 1].chomp
+      gemset = which_gemset
+      if gemset != ''
+        %x[find ~/.rvm/gems/#{gemset} -type d -name 'hiera-puppet-helper*' |head -n 1].chomp
+      end
     else
       return nil
     end
   end
 
+  def which_gemset
+    %x[rvm current].chomp
+  end
+
+  def which_puppet
+    %x[puppet --version].chomp
+  end
+
+  def which_hiera
+    %x[hiera --version].chomp
+  end
+
   desc 'install into the local gemsets' 
-  task :install_into_gemset, :gemset, :puppet_version, :hiera_version, :hiera_puppet_helper_version do |t,args|
-    sh %{cp #{@puppet_file} ~/.rvm/gems/#{args[:gemset]}/gems/#{args[:puppet_version]}/lib/puppet/indirector/data_binding/} do |ok, res|
+  task :install_into_gemset  do 
+
+    gemset = which_gemset
+    puppet_version = which_puppet
+    hiera_version = which_hiera
+
+    sh %{cp #{@puppet_file} ~/.rvm/gems/#{gemset}/gems/puppet-#{puppet_version}/lib/puppet/indirector/data_binding/} do |ok, res|
       puts "installed lib/puppet/indirector/data_binding/hiera.rb" if ok
     end
-    sh %{cp #{@hiera_file} ~/.rvm/gems/#{args[:gemset]}/gems/#{args[:hiera_version]}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
+    sh %{cp #{@hiera_file} ~/.rvm/gems/#{gemset}/gems/#{hiera_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
       puts "installed lib/hiera/backend/module_data_backend.rb" if ok
     end
-    sh %{cp #{@hiera_file} ~/.rvm/gems/#{args[:gemset]}/gems/#{args[:hiera_puppet_helper_version]}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
-      puts "installed lib/hiera/backend/module_data_backend.rb" if ok
+    if hiera_helper_gem != ''
+      sh %{cp #{@hiera_file} ~/.rvm/gems/#{gemset}/gems/#{hiera_puppet_helper_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
+        puts "installed lib/hiera/backend/module_data_backend.rb" if ok
+      end
     end
   end
 
