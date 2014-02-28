@@ -14,7 +14,7 @@ require 'rake'
   def hiera_helper_gem(type)
     unless type == 'rh'
       if %x[gem list |grep hiera-puppet-helper] 
-        return %x[find ~/.rvm/gems/#{gemset} -type d -name 'hiera-puppet-helper*' |head -n 1].chomp
+        return %x[find ~/.rvm/gems/#{type} -type d -name 'hiera-puppet-helper*' |head -n 1].chomp
         break
       end
     else
