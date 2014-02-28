@@ -11,16 +11,19 @@ require 'rake'
     hiera_path = %x[find /usr/lib/ruby -type d -name 'hiera' | head -n 1].chomp
   end
 
-  def hiera_helper_gem
-    if %x[gem list |grep hiera-puppet-helper] 
-      %x[find /usr/lib/ruby -type d -name 'hiera-puppet-helper*' |head -n 1].chomp
-      gemset = which_gemset
-      if gemset != ''
-        %x[find ~/.rvm/gems/#{gemset} -type d -name 'hiera-puppet-helper*' |head -n 1].chomp
+  def hiera_helper_gem(type)
+    unless type == 'rh'
+      if %x[gem list |grep hiera-puppet-helper] 
+        return %x[find ~/.rvm/gems/#{gemset} -type d -name 'hiera-puppet-helper*' |head -n 1].chomp
+        break
       end
     else
-      return nil
-    end
+      if %x[/usr/bin/gem list |grep hiera-puppet-helper]
+        return  %x[find /usr/lib/ruby -type d -name 'hiera-puppet-helper*' |head -n 1].chomp
+        break
+      end
+    end 
+    return nil  
   end
 
   def which_gemset
@@ -41,6 +44,7 @@ require 'rake'
     gemset = which_gemset
     puppet_version = which_puppet
     hiera_version = which_hiera
+    hiera_helper_version = hiera_helper_gem(gemset)
 
     sh %{cp #{@puppet_file} ~/.rvm/gems/#{gemset}/gems/puppet-#{puppet_version}/lib/puppet/indirector/data_binding/} do |ok, res|
       puts "installed lib/puppet/indirector/data_binding/hiera.rb" if ok
@@ -48,8 +52,8 @@ require 'rake'
     sh %{cp #{@hiera_file} ~/.rvm/gems/#{gemset}/gems/hiera-#{hiera_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
       puts "installed lib/hiera/backend/module_data_backend.rb" if ok
     end
-    if hiera_helper_gem != ''
-      sh %{cp #{@hiera_file} ~/.rvm/gems/#{gemset}/gems/hiera-puppet-heler-#{hiera_puppet_helper_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
+    if hiera_helper_version != ''
+      sh %{cp #{@hiera_file} ~/.rvm/gems/#{gemset}/gems/hiera-puppet-heler-#{hiera_helper_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
         puts "installed lib/hiera/backend/module_data_backend.rb" if ok
       end
     end
