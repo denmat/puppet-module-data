@@ -45,11 +45,11 @@ require 'rake'
     sh %{cp #{@puppet_file} ~/.rvm/gems/#{gemset}/gems/puppet-#{puppet_version}/lib/puppet/indirector/data_binding/} do |ok, res|
       puts "installed lib/puppet/indirector/data_binding/hiera.rb" if ok
     end
-    sh %{cp #{@hiera_file} ~/.rvm/gems/#{gemset}/gems/#{hiera_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
+    sh %{cp #{@hiera_file} ~/.rvm/gems/#{gemset}/gems/hiera-#{hiera_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
       puts "installed lib/hiera/backend/module_data_backend.rb" if ok
     end
     if hiera_helper_gem != ''
-      sh %{cp #{@hiera_file} ~/.rvm/gems/#{gemset}/gems/#{hiera_puppet_helper_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
+      sh %{cp #{@hiera_file} ~/.rvm/gems/#{gemset}/gems/hiera-puppet-heler-#{hiera_puppet_helper_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
         puts "installed lib/hiera/backend/module_data_backend.rb" if ok
       end
     end
