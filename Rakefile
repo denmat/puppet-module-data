@@ -53,7 +53,7 @@ require 'rake'
       puts "installed lib/hiera/backend/module_data_backend.rb" if ok
     end
     if hiera_helper_version != ''
-      sh %{cp #{@hiera_file} ~/.rvm/gems/#{gemset}/gems/hiera-puppet-heler-#{hiera_helper_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
+      sh %{cp #{@hiera_file} #{hiera_helper_version}/lib/hiera/backend/module_data_backend.rb} do |ok, res|
         puts "installed lib/hiera/backend/module_data_backend.rb" if ok
       end
     end
